@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Артем](https://up.htmlacademy.ru/javascript/21/user/1117861).
-* Наставник: `Неизвестно`.
+* Наставник: [Константин Цуканов](https://htmlacademy.ru/profile/id769011).
 
 ---
 
