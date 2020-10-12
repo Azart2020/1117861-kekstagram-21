@@ -1,10 +1,5 @@
 'use strict';
 
-const PICTURE_CONTAINER = document.querySelector('.pictures');
-const TEMPLATE_PICTURE = document.querySelector('#picture')
-  .content
-  .querySelector('.picture');
-
 const MESSAGES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -25,10 +20,22 @@ const NAMES = [
   'Ада'
 ];
 
-const getArrayPhoto = function (count) {
+const Count = {
+  PHOTOS: 25,
+  LIKES_MIN: 15,
+  LIKES_MAX: 200,
+  COMMENTS: 2
+};
+
+const picturesContainer = document.querySelector('.pictures');
+const pictureTemplate = document.querySelector('#picture')
+  .content
+  .querySelector('.picture');
+
+const getRandomPhotos = function (count) {
   const pictures = [];
   for (let i = 0; i < count; i++) {
-    const picture = getRandomDescription();
+    const picture = getRandomDescription(i);
     pictures[i] = picture;
   }
 
@@ -36,16 +43,14 @@ const getArrayPhoto = function (count) {
 };
 
 
-const getRandomNumber = function (min, max) {
+const getRandomNumber = function(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getPhoto = function () {
-
-
-  return 'photos/' + getRandomNumber(1, 25) + '.jpg';
+const getPhoto = function (number) {
+  return 'photos/' + (number + 1) + '.jpg';
 };
 const getTextPhoto = function () {
   return getRandomNumber(5, 10) + ' баллов из ' + getRandomNumber(10, 13);
@@ -53,6 +58,10 @@ const getTextPhoto = function () {
 
 const getRandomIndex = function (elements) {
   return getRandomNumber(0, elements.length - 1);
+};
+
+const getRandomAvatar = function () {
+  return 'img/avatar-' + getRandomNumber(1, 6) + '.svg';
 };
 
 const getRandomElement = function (elements) {
@@ -71,40 +80,41 @@ const getAmountComment = function (amount) {
 
 const getRandomComment = function () {
   return {
-    avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg',
+    avatar: getRandomAvatar(),
     message: getRandomElement(MESSAGES),
     name: getRandomElement(NAMES)
   };
 };
 
-const getRandomDescription = function () {
+const getRandomDescription = function (number) {
   return {
-    url: getPhoto(),
+    url: getPhoto(number),
     description: getTextPhoto(),
-    likes: getRandomNumber(15, 200),
-    comments: getAmountComment(2)
+    likes: getRandomNumber(Count.LIKES_MIN, Count.LIKES_MAX),
+    comments: getAmountComment(Count.COMMENTS)
   };
 };
 
-const renderPhotos = function (picture) {
-
-  let photoElement = TEMPLATE_PICTURE.cloneNode(true);
-
-  photoElement.querySelector('.picture__img').src = picture.url;
-  photoElement.querySelector('.picture__likes').textContent = picture.likes;
-  photoElement.querySelector('.picture__comments').textContent = picture.comments;
-
-  return photoElement;
+const renderPictures = function (pictures) {
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < pictures.length; i++) {
+    const picture = pictures[i];
+    const pictureElement = renderPicture(picture);
+    fragment.appendChild(pictureElement);
+  }
+  picturesContainer.appendChild(fragment);
 };
 
-const photos = getArrayPhoto();
+const renderPicture = function (picture) {
+  const pictureElement = pictureTemplate.cloneNode(true);
 
-const fragment = document.createDocumentFragment();
-for (let i = 0; i < photos.length; i++) {
+  pictureElement.querySelector('.picture__img').src = picture.url;
+  pictureElement.querySelector('.picture__likes').textContent = picture.likes;
+  pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
 
-  fragment.appendChild(renderPhotos(photos[i]));
-}
-PICTURE_CONTAINER.appendChild(fragment);
+  return pictureElement;
+};
 
-console.log(getArrayPhoto(25));
-console.log(photos);
+const photos = getRandomPhotos(Count.PHOTOS);
+
+renderPictures(photos);
