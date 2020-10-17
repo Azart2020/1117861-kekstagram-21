@@ -867,6 +867,8 @@ main {
   -ms-flex-negative: 0;
         flex-shrink: 0;
   margin-right: 15px;
+  width: 35px;
+  height: 35px;
 }
 
 .social__caption {

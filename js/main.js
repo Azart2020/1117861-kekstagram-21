@@ -126,43 +126,61 @@ const photos = getRandomPhotos(Count.PHOTOS);
 renderPictures(photos);
 
 const mainPicture = document.querySelector('.big-picture');
-const commentsContainer = document.querySelector('social__comments');
 
-const createComments = function () {
-  let comment = document.createElement('li');
-  comment.classList.add('social__comment');
+const removeChildren = function (element) {
+  while (element.firstChild) {
+    element.firstChild.remove();
+  }
+};
+const createComment = function (comment) {
+  const commentElement = document.createElement('li');
+  commentElement.classList.add('social__comment');
 
-  let img = document.createElement('img');
+  const img = document.createElement('img');
   img.classList.add('social__picture');
-  img.src = getRandomAvatar();
-  img.alt = getRandomElement(NAMES);
-  img.width = 35;
-  img.height = 35;
-  comment.appendChild(img);
+  img.src = comment.avatar;
+  img.alt = comment.name;
+  commentElement.appendChild(img);
 
-  let commentText = document.createElement('p');
+  const commentText = document.createElement('p');
   commentText.classList.add('social__text');
-  comment.appendChild(commentText);
+  commentText.textContent = comment.message;
+  commentElement.appendChild(commentText);
 
-  return comment;
+  return commentElement;
 };
 
-const showBigPicture = function () {
+
+const createComments = function (comments) {
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < comments.length; i++) {
+    const commentElement = createComment(comments[i]);
+    fragment.appendChild(commentElement);
+  }
+  return fragment;
+};
+
+const showBigPicture = function (photo) {
+  document.body.classList.add('modal-open');
   mainPicture.classList.remove('hidden');
 
-  document.querySelector('.big-picture__img img').src = photos[0].url;
-  document.querySelector('.likes-count').textContent = photos[0].likes;
-  document.querySelector('.comments-count').textContent = photos[0].comments.length;
-  document.querySelector('.social__caption').textContent = photos[0].description;
-  commentsContainer.appendChild(createComments());
+  mainPicture.querySelector('.big-picture__img img').src = photo.url;
+  mainPicture.querySelector('.likes-count').textContent = photo.likes;
+  mainPicture.querySelector('.comments-count').textContent = photo.comments.length;
+  mainPicture.querySelector('.social__caption').textContent = photo.description;
+  mainPicture.querySelector('.social__picture').alt = photo.name;
+  const commentsContainer = mainPicture.querySelector('.social__comments');
 
-  let commentCount = document.querySelector('.social__comment-count');
-  let commentLoad = document.querySelector('.social__comment-loadmore');
+  const socialElement = mainPicture.querySelector('.social__comments');
+  removeChildren(socialElement);
+
+  commentsContainer.appendChild(
+      createComments(photo.comments)
+  );
+
+  const commentCount = document.querySelector('.social__comment-count');
+  const commentLoad = document.querySelector('.comments-loader');
   commentCount.classList.add('hidden');
   commentLoad.classList.add('hidden');
 };
-let body = document.querySelector('body');
-body.classList.add('modal-open');
-
-showBigPicture();
-console.log(photos);
+showBigPicture(photos[8]);
