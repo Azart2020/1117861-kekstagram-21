@@ -19,6 +19,13 @@ const NAMES = [
   'Нестор',
   'Ада'
 ];
+const DESCRIPTION = [
+  'Тестим новую камеру! =)',
+  'Первый опыт в фотографии',
+  'Теплые воспоминания',
+  'Редкий кадр',
+  'То что меня вдохновляет'
+];
 
 const Count = {
   PHOTOS: 25,
@@ -42,18 +49,22 @@ const getRandomPhotos = function (count) {
   return pictures;
 };
 
-
 const getRandomNumber = function (min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+const getRandomElement = function (elements) {
+  const index = getRandomIndex(elements);
+  return elements[index];
+};
 
 const getPhoto = function (number) {
   return 'photos/' + (number + 1) + '.jpg';
 };
+
 const getTextPhoto = function () {
-  return getRandomNumber(5, 10) + ' баллов из ' + getRandomNumber(10, 13);
+  return getRandomElement(DESCRIPTION);
 };
 
 const getRandomIndex = function (elements) {
@@ -62,11 +73,6 @@ const getRandomIndex = function (elements) {
 
 const getRandomAvatar = function () {
   return 'img/avatar-' + getRandomNumber(1, 6) + '.svg';
-};
-
-const getRandomElement = function (elements) {
-  const index = getRandomIndex(elements);
-  return elements[index];
 };
 
 const getAmountComment = function (amount) {
@@ -118,3 +124,63 @@ const renderPicture = function (picture) {
 const photos = getRandomPhotos(Count.PHOTOS);
 
 renderPictures(photos);
+
+const mainPicture = document.querySelector('.big-picture');
+
+const removeChildren = function (element) {
+  while (element.firstChild) {
+    element.firstChild.remove();
+  }
+};
+const createComment = function (comment) {
+  const commentElement = document.createElement('li');
+  commentElement.classList.add('social__comment');
+
+  const img = document.createElement('img');
+  img.classList.add('social__picture');
+  img.src = comment.avatar;
+  img.alt = comment.name;
+  commentElement.appendChild(img);
+
+  const commentText = document.createElement('p');
+  commentText.classList.add('social__text');
+  commentText.textContent = comment.message;
+  commentElement.appendChild(commentText);
+
+  return commentElement;
+};
+
+
+const createComments = function (comments) {
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < comments.length; i++) {
+    const commentElement = createComment(comments[i]);
+    fragment.appendChild(commentElement);
+  }
+  return fragment;
+};
+
+const showBigPicture = function (photo) {
+  document.body.classList.add('modal-open');
+  mainPicture.classList.remove('hidden');
+
+  mainPicture.querySelector('.big-picture__img img').src = photo.url;
+  mainPicture.querySelector('.likes-count').textContent = photo.likes;
+  mainPicture.querySelector('.comments-count').textContent = photo.comments.length;
+  mainPicture.querySelector('.social__caption').textContent = photo.description;
+  mainPicture.querySelector('.social__picture').alt = photo.name;
+  const commentsContainer = mainPicture.querySelector('.social__comments');
+
+  const socialElement = mainPicture.querySelector('.social__comments');
+  removeChildren(socialElement);
+
+  commentsContainer.appendChild(
+      createComments(photo.comments)
+  );
+
+  const commentCount = document.querySelector('.social__comment-count');
+  const commentLoad = document.querySelector('.comments-loader');
+  commentCount.classList.add('hidden');
+  commentLoad.classList.add('hidden');
+};
+showBigPicture(photos[8]);
