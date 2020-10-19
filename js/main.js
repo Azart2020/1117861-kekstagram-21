@@ -161,8 +161,8 @@ const createComments = function (comments) {
 };
 
 const showBigPicture = function (photo) {
-  document.body.classList.add('modal-open');
-  mainPicture.classList.remove('hidden');
+  /*document.body.classList.add('modal-open');
+  mainPicture.classList.remove('hidden');*/
 
   mainPicture.querySelector('.big-picture__img img').src = photo.url;
   mainPicture.querySelector('.likes-count').textContent = photo.likes;
