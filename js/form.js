@@ -1,18 +1,16 @@
 'use strict';
 const form = document.querySelector('.img-upload__form');
-const openForm = document.querySelector('.scale__control');
 const photoForm = document.querySelector('.img-upload__overlay');
 const closeForm = document.querySelector('.img-upload__cancel');
-const uploadFile = document.getElementById('.upload-file');
-const hashTags = document.querySelector('.text__hashtags');
-const textDescription = document.querySelector('.text__description');
+const uploadFile = document.querySelector('#upload-file');
 const effectLevelPin = document.querySelector('.effect-level__pin');
+const effects = document.querySelector('.effects');
+const preview = document.querySelector('.img-upload__preview');
 
-let HashTags = {
-  MAX_LENGTH: 20,
-  MAX_COUNT: 5
-};
 
+uploadFile.addEventListener('change', function () {
+  openPopup();
+});
 
 const onPopupEscPress = function (evt) {
   if (evt.key === 'Escape') {
@@ -33,54 +31,52 @@ const closePopup = function () {
   document.addEventListener('keydown', onPopupEscPress);
 };
 
-openForm.addEventListener('click', function () {
-  openPopup();
-});
 
 closeForm.addEventListener('click', function () {
   closePopup();
 })
 ;
 
-hashTags.addEventListener('invalid', function () {
-  let tags = hashTags.value.toLowerCase().split(' ');
-  let regex = /#[a-zA-Z0-9]+(\s|$\s?)/;
+let choisenType = 'none';
 
-  if (tags > HashTags.MAX_COUNT) {
-    hashTags.setCustomValidity('Нельзя указать больше' + HashTags.MAX_COUNT + 'хэш-тегов');
-  } else if (regex.test(tags)) {
-    hashTags.setCustomValidity('хэш-тег начинается с символа # (решётка), строка после решётки должна состоять из букв\
-     и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.),\
-      эмодзи и т. д., хеш-тег не может состоять только из одной решётки,хэш-теги разделяются пробелами');
-  } else {
-    hashTags.setCustomValidity('');
+effects.addEventListener('change', function (evt) {
+  let toggler = evt.target;
+  let className = 'effects__preview--' + toggler.value;
+  let previewClassName = 'effects__preview--' + choisenType;
+  if (className !== previewClassName) {
+    preview.classList.remove(previewClassName);
   }
-  hashTags.reportValidity();
+  preview.classList.add(className);
+  choisenType = toggler.value;
 });
 
-textDescription.addEventListener('invalid', function () {
-  if (textDescription.validity.tooLong) {
-    hashTags.setCustomValidity('Длина комментария не может составлять больше 140 символов;');
-  } else {
-    hashTags.setCustomValidity('');
+const effectLevel = document.querySelector('.effect-level');
+const effectLevelValue = document.querySelector('.effect-level__value');
+
+effectLevelPin.addEventListener('mouseup', function (evt) {
+  let pinValue = effectLevelValue.value;
+  let filterValue;
+
+  if (preview.classList.contains('effects__preview--chrome')) {
+    filterValue = pinValue / 100;
+    preview.style.webkitFilter = 'grayscale(' + filterValue + ')';
   }
-  hashTags.reportValidity();
+  if (preview.classList.contains('effects__preview--sepia')) {
+    filterValue = pinValue / 100;
+    preview.style.webkitFilter = 'sepia(' + filterValue + ')';
+  }
+  if (preview.classList.contains('effects__preview--marvin')) {
+    filterValue = pinValue;
+    preview.style.webkitFilter = 'invert(' + filterValue + '%' + ')';
+  }
+  if (preview.classList.contains('effects__preview--phobos')) {
+    filterValue = pinValue * 3 / 100;
+    preview.style.webkitFilter = 'blur(' + filterValue + 'px' + ')';
+  }
+  if (preview.classList.contains('effects__preview--heat')) {
+    filterValue = pinValue * 3 / 100;
+    preview.style.webkitFilter = 'brightness(' + filterValue + ')';
+  } console.log(preview.style.webkitFilter);
+
 });
 
-effectLevelPin.addEventListener('mouseup', function () {
-});
-
-/*
-const validate = function () {
-  let tags = hashTags.value.split(' ');
-  let regex = /#[a-zA-Z0-9]+\s/;
-  if (regex.test(tags)) {
-
-  };
-};
-
-
-uploadFile.addEventListener('change', function () {
-  как я понимаю это обработчик события изменения на #upload-file после которого должна открываться форма
-});
-*/
