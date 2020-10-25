@@ -19,7 +19,7 @@ hashtags.addEventListener(`change`, function (evt) {
 
   if (tags.length > tags.MAX_COUNT) {
     showValidationError(
-      `Максимальное количество хэштегов не более ` + Hashtags.MAX_COUNT
+        `Максимальное количество хэштегов не более ` + Hashtags.MAX_COUNT
     );
     return;
   }
@@ -30,7 +30,7 @@ hashtags.addEventListener(`change`, function (evt) {
 
     if (!resultOfValidation) {
       showValidationError(
-        `Не правильно введен хэштег! Максимальная длина одного хэш-тега ` +
+          `Не правильно введен хэштег! Максимальная длина одного хэш-тега ` +
           Hashtags.MAX_LENGTH +
           ` символов, включая решётку, Каждый хэштег должен начинаться с #, хэштеги должны разделяться пробелами,
         строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы.`
