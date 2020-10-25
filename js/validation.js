@@ -1,74 +1,51 @@
-'use strict';
-const hashtags = document.querySelector('.text__hashtags');
-const textDescription = document.querySelector('.text__description');
+"use strict";
 
-const MAX_COMMENT_LENGTH = 140;
+const hashtags = document.querySelector(`.text__hashtags`);
 const Hashtags = {
   MAX_LENGTH: 20,
-  MAX_COUNT: 2
+  MAX_COUNT: 2,
 };
 
- var addBorder = function (input) {
-    input.style.borderColor = 'red';
-  };
+const showValidationError = function (message) {
+  hashtags.setCustomValidity(message);
+  let event = new Event(`invalid`);
+  hashtags.dispatchEvent(event);
+};
 
-  var removeBorder = function (input) {
-    input.style.borderColor = 'transparent';
-  };
-
-const checkValidityHashtag = function () {
-
-let hashtagsSpacesValidity = [];
-
-hashtags.addEventListener('change', function (evt) {
+hashtags.addEventListener(`change`, function (evt) {
   let hashtagInput = evt.target;
-  let hashtagsAll = hashTagInput.value;
-  let tags = hashtagsAll.trim().toLowerCase().split(' ');
-  console.log(tags)
+  let hashtagsAll = hashtagInput.value.replace(/\s+/g, ` `);
+  let tags = hashtagsAll.trim().toLowerCase().split(` `);
 
-  for (var i = 0; i < hashtags.length; i++) {
+  if (tags.length > tags.MAX_COUNT) {
+    showValidationError(
+      `Максимальное количество хэштегов не более ` + Hashtags.MAX_COUNT
+    );
+    return;
+  }
+  const currentTags = [];
+  for (let i = 0; i < tags.length; i++) {
+    const tag = tags[i];
+    const resultOfValidation = checkValidityHashtag(tag);
 
-      if (hashtags[i].length > Hashtags.MAX_LENGTH) {
-        hashtags.setCustomValidity('максимальная длина одного хэш-тега ' + HashTags.MAX_LENGTH + ' символов, включая решётку');
-        return false;
-      };
-
-      if (hashtags.length > Hashtags.MAX_COUNT) {
-      hashtags.setCustomValidity('Нельзя указать больше' + HashTags.MAX_COUNT + 'хэш-тегов');
-       addBorder(hashtags);
-      return false;
-      };
-
-      if (hashtags[i][0] !== '#') {
-        hashtags.setCustomValidity('Каждый хэштег должен начинаться с #');
-        addBorder(hashtags);
-        return false;
-      };
-
-       hashtagsSpacesValidity[i] = hashtags[i].slice(1);
-      if (hashtagsSpacesValidity[i].search(/#/) !== -1) {
-        hashtags.setCustomValidity('Хэштеги должны разделяться пробелами');
-        addBorder(hashtags);
-        return false;
-      };
-      if (hashtags.indexOf(hashtags[i]) !== i) {
-        hashtags.setCustomValidity('Хэштеги не должны повторяться');
-        addBorder(hashtags);
-        return false;
-      };
-      hashtags.setCustomValidity('');
-      removeBorder(hashtags);
-      return true;
-    };
-});
-};
-
-  const commentValidityCheck = function () {
-    if (textDescription.value.length > MAX_COMMENT_LENGTH) {
-      textDescription.setCustomValidity('Комментарий не должен содержать больше 140 символов.');
-      addBorder(textDescription);
-    } else {
-      textDescription.setCustomValidity('');
-      removeBorder(textDescription);
+    if (!resultOfValidation) {
+      showValidationError(
+        `Не правильно введен хэштег! Максимальная длина одного хэш-тега ` +
+          Hashtags.MAX_LENGTH +
+          ` символов, включая решётку, Каждый хэштег должен начинаться с #, хэштеги должны разделяться пробелами,
+        строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы.`
+      );
+      return;
     }
-  };
+
+    if (currentTags.includes(tag)) {
+      showValidationError(`Хештэги не должны повторяться`);
+      return;
+    }
+    currentTags.push(tag);
+  }
+});
+
+const checkValidityHashtag = function (tag) {
+  return /^#[a-zA-Zа-яА-ЯёЁ0-9]{1,20}$/.test(tag);
+};
