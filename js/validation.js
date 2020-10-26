@@ -8,8 +8,7 @@ const Hashtags = {
 
 const showValidationError = function (message) {
   hashtags.setCustomValidity(message);
-  let event = new Event(`invalid`);
-  hashtags.dispatchEvent(event);
+  hashtags.reportValidity();
 };
 
 hashtags.addEventListener(`change`, function (evt) {
@@ -44,6 +43,7 @@ hashtags.addEventListener(`change`, function (evt) {
     }
     currentTags.push(tag);
   }
+  showValidationError('');
 });
 
 const checkValidityHashtag = function (tag) {
