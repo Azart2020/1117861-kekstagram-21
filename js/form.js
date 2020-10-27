@@ -9,14 +9,12 @@ const preview = document.querySelector(`.img-upload__preview`);
 uploadFile.addEventListener(`change`, function () {
   openPopup();
 });
-
 const onPopupEscPress = function (evt) {
   if (evt.key === `Escape`) {
     evt.preventDefault();
     closePopup();
   }
 };
-
 const openPopup = function () {
   photoForm.classList.remove(`hidden`);
   document.body.classList.add(`modal-open`);
