@@ -3,7 +3,7 @@
 const hashtags = document.querySelector(`.text__hashtags`);
 const Hashtags = {
   MAX_LENGTH: 20,
-  MAX_COUNT: 2,
+  MAX_COUNT: 5,
 };
 
 const showValidationError = function (message) {
@@ -16,7 +16,7 @@ hashtags.addEventListener(`change`, function (evt) {
   let hashtagsAll = hashtagInput.value.replace(/\s+/g, ` `);
   let tags = hashtagsAll.trim().toLowerCase().split(` `);
 
-  if (tags.length > tags.MAX_COUNT) {
+  if (tags.length > Hashtags.MAX_COUNT) {
     showValidationError(
         `Максимальное количество хэштегов не более ` + Hashtags.MAX_COUNT
     );
@@ -43,7 +43,7 @@ hashtags.addEventListener(`change`, function (evt) {
     }
     currentTags.push(tag);
   }
-  showValidationError('');
+  showValidationError(``);
 });
 
 const checkValidityHashtag = function (tag) {
