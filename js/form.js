@@ -5,31 +5,51 @@ const uploadFile = document.querySelector(`#upload-file`);
 const effectLevelPin = document.querySelector(`.effect-level__pin`);
 const effects = document.querySelector(`.effects`);
 const preview = document.querySelector(`.img-upload__preview`);
+const textField = document.querySelector(`.text__description`);
+const socialField = document.querySelector(`.social__footer-text`);
+const hashtags = document.querySelector(`.text__hashtags`);
+const modalCloseButton = `Escape`;
 
-uploadFile.addEventListener(`change`, function () {
-  openPopup();
-});
-const onPopupEscPress = function (evt) {
-  if (evt.key === `Escape`) {
+let onPopupEscPress = function (evt) {
+  if (evt.key === modalCloseButton) {
     evt.preventDefault();
     closePopup();
   }
 };
-const openPopup = function () {
-  photoForm.classList.remove(`hidden`);
-  document.body.classList.add(`modal-open`);
-};
 
-const closePopup = function () {
-  photoForm.classList.add(`hidden`);
-  document.body.classList.remove(`modal-open`);
+let openPopup = function () {
+  photoForm.classList.remove(`hidden`);
+
   document.addEventListener(`keydown`, onPopupEscPress);
 };
+
+let closePopup = function () {
+  photoForm.classList.add(`hidden`);
+
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
+uploadFile.addEventListener(`change`, function () {
+  openPopup();
+});
 
 closeForm.addEventListener(`click`, function () {
   closePopup();
 });
-
+closeForm.addEventListener(`keydown`, function (evt) {
+  if (evt.key === modalCloseButton) {
+    closePopup();
+  }
+});
+hashtags.addEventListener(`keydown`, function (evt) {
+  evt.stopPropagation();
+});
+textField.addEventListener(`keydown`, function (evt) {
+  evt.stopPropagation();
+});
+socialField.addEventListener(`keydown`, function (evt) {
+  evt.stopPropagation();
+});
 let choisenType = `none`;
 
 effects.addEventListener(`change`, function (evt) {

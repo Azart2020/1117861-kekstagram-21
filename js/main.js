@@ -34,6 +34,7 @@ const Count = {
   LIKES_MAX: 200,
   COMMENTS: 2,
 };
+const modalCloseButton = `Escape`;
 
 const picturesContainer = document.querySelector(`.pictures`);
 const pictureTemplate = document
@@ -112,10 +113,31 @@ const renderPictures = function (pictures) {
   picturesContainer.appendChild(fragment);
 };
 
-let closePhoto = function () {
-  mainPicture.classList.add(`hidden`);
-  document.querySelector(`body`).classList.remove(`modal-open`);
+const onClosePhotoClick = function () {
+  closePhoto();
 };
+
+const onBodyPhotoKeydown = function (evt) {
+  if (evt.key === modalCloseButton) {
+    closePhoto();
+  }
+};
+
+const closePhoto = function () {
+  mainPicture.classList.add(`hidden`);
+  photoClose.removeEventListener(`click`, onClosePhotoClick);
+  document.body.removeEventListener(`keydown`, onBodyPhotoKeydown);
+};
+
+const mainPicture = document.querySelector(`.big-picture__preview`);
+const photoClose = document.querySelector(`.big-picture__cancel`);
+
+photoClose.addEventListener(`click`, function () {
+  mainPicture.classList.remove(`hidden`);
+  mainPicture.addEventListener(`click`, onClosePhotoClick);
+  document.body.addEventListener(`keydown`, onBodyPhotoKeydown);
+});
+
 const renderPicture = function (picture) {
   const pictureElement = pictureTemplate.cloneNode(true);
 
@@ -124,15 +146,8 @@ const renderPicture = function (picture) {
   pictureElement.querySelector(`.picture__comments`).textContent = picture.comments.length;
   pictureElement.addEventListener(`click`, function () {
     showBigPicture(picture);
-    document.querySelector(`body`).classList.add(`modal-open`);
 
-    document.addEventListener(`keydown`, function (evt) {
-      if (evt.key === `Escape`) {
-        evt.preventDefault();
-        mainPicture.classList.add(`hidden`);
-        document.querySelector(`body`).classList.remove(`modal-open`);
-      }
-    });
+    document.addEventListener(`keydown`, onBodyPhotoKeydown);
   });
   return pictureElement;
 };
@@ -140,13 +155,6 @@ const renderPicture = function (picture) {
 const photos = getRandomPhotos(Count.PHOTOS);
 
 renderPictures(photos);
-
-const mainPicture = document.querySelector(`.big-picture__preview`);
-const photoClose = document.querySelector(`.big-picture__cancel`);
-
-photoClose.addEventListener(`click`, function () {
-  closePhoto();
-});
 
 const removeChildren = function (element) {
   while (element.firstChild) {
