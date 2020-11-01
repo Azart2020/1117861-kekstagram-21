@@ -167,4 +167,5 @@
     photos,
     renderPictures,
   };
+
 })();
