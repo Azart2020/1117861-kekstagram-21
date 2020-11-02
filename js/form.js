@@ -8,6 +8,7 @@
   const preview = document.querySelector(`.img-upload__preview`);
   const textField = document.querySelector(`.text__description`);
   const socialField = document.querySelector(`.social__footer-text`);
+  const effectLevelValue = document.querySelector(`.effect-level__value`);
 
   let onPopupEscPress = function (evt) {
     if (evt.key === window.renderPhoto.modalCloseButton) {
@@ -62,31 +63,63 @@
     choisenType = toggler.value;
   });
 
-  const effectLevelValue = document.querySelector(`.effect-level__value`);
+  effectLevelPin.addEventListener(`mousedown`, function (evt) {
+    evt.preventDefault();
 
-  effectLevelPin.addEventListener(`mouseup`, function () {
-    let pinValue = effectLevelValue.value;
-    let filterValue;
+    let startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
 
-    if (preview.classList.contains(`effects__preview--chrome`)) {
-      filterValue = pinValue / 100;
-      preview.style.webkitFilter = `grayscale(` + filterValue + `)`;
-    }
-    if (preview.classList.contains(`effects__preview--sepia`)) {
-      filterValue = pinValue / 100;
-      preview.style.webkitFilter = `sepia(` + filterValue + `)`;
-    }
-    if (preview.classList.contains(`effects__preview--marvin`)) {
-      filterValue = pinValue;
-      preview.style.webkitFilter = `invert(` + filterValue + `%` + `)`;
-    }
-    if (preview.classList.contains(`effects__preview--phobos`)) {
-      filterValue = (pinValue * 3) / 100;
-      preview.style.webkitFilter = `blur(` + filterValue + `px` + `)`;
-    }
-    if (preview.classList.contains(`effects__preview--heat`)) {
-      filterValue = (pinValue * 3) / 100;
-      preview.style.webkitFilter = `brightness(` + filterValue + `)`;
-    }
+    let onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      let shift = {
+        x: startCoords.x - moveEvt.clientX
+      };
+
+      startCoords = {
+        x: moveEvt.clientX
+      };
+
+      let pinPositionX = effectLevelPin.offsetLeft - shift.x;
+      effectLevelPin.style.left = Math.round(pinPositionX) + `%`;
+      console.log(effectLevelPin.style.left);
+    };
+
+    let onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      let pinValue = effectLevelValue.value;
+      let filterValue;
+
+      if (preview.classList.contains(`effects__preview--chrome`)) {
+        filterValue = pinValue / 100;
+        preview.style.webkitFilter = `grayscale(` + filterValue + `)`;
+      }
+      if (preview.classList.contains(`effects__preview--sepia`)) {
+        filterValue = pinValue / 100;
+        preview.style.webkitFilter = `sepia(` + filterValue + `)`;
+      }
+      if (preview.classList.contains(`effects__preview--marvin`)) {
+        filterValue = pinValue;
+        preview.style.webkitFilter = `invert(` + filterValue + `%` + `)`;
+      }
+      if (preview.classList.contains(`effects__preview--phobos`)) {
+        filterValue = (pinValue * 3) / 100;
+        preview.style.webkitFilter = `blur(` + filterValue + `px` + `)`;
+      }
+      if (preview.classList.contains(`effects__preview--heat`)) {
+        filterValue = (pinValue * 3) / 100;
+        preview.style.webkitFilter = `brightness(` + filterValue + `)`;
+      }
+      document.removeEventListener(`mousemove`, onMouseMove);
+      document.removeEventListener(`mouseup`, onMouseUp);
+    };
+
+    document.addEventListener(`mousemove`, onMouseMove);
+    document.addEventListener(`mouseup`, onMouseUp);
   });
+
 })();
+
