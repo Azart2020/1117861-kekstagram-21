@@ -84,7 +84,6 @@
 
       let pinPositionX = effectLevelPin.offsetLeft - shift.x;
       effectLevelPin.style.left = Math.round(pinPositionX) + `%`;
-      console.log(effectLevelPin.style.left);
     };
 
     let onMouseUp = function (upEvt) {
