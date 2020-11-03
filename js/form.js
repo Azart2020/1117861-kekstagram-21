@@ -9,6 +9,8 @@
   const textField = document.querySelector(`.text__description`);
   const socialField = document.querySelector(`.social__footer-text`);
   const effectLevelValue = document.querySelector(`.effect-level__value`);
+  const effectLevelLine = document.querySelector(`.effect-level__line`);
+  const effectLevelDepth = document.querySelector(`.effect-level__depth`);
 
   let onPopupEscPress = function (evt) {
     if (evt.key === window.renderPhoto.modalCloseButton) {
@@ -66,27 +68,35 @@
   effectLevelPin.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
 
-    let startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+    let startCoordsX = evt.clientX;
+    let offsetWidth = effectLevelLine.offsetWidth;
+
+    const getNewOffset = function (shiftX) {
+      let newOffset = (effectLevelPin.offsetLeft - shiftX) / offsetWidth * 100;
+
+      if (newOffset < 0) {
+        newOffset = 0;
+      } else if (newOffset > 100) {
+        newOffset = 100;
+      }
+      return newOffset;
     };
+
 
     let onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
-      let shift = {
-        x: startCoords.x - moveEvt.clientX
-      };
+      let shiftX = startCoordsX - moveEvt.clientX;
 
-      startCoords = {
-        x: moveEvt.clientX
-      };
+      startCoordsX = moveEvt.clientX;
 
-      let pinPositionX = effectLevelPin.offsetLeft - shift.x;
-      effectLevelPin.style.left = Math.round(pinPositionX) + `%`;
+      let newCoordsX = getNewOffset(shiftX);
+
+      effectLevelPin.style.left = Math.ceil(newCoordsX) + `%`;
+      effectLevelDepth.style.width = Math.ceil(newCoordsX) + `%`;
     };
 
-    let onMouseUp = function (upEvt) {
+    const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
       let pinValue = effectLevelValue.value;
