@@ -15,6 +15,7 @@
   const getRandomIndex = function (elements) {
     return getRandomNumber(0, elements.length - 1);
   };
+
   window.data = {
     getRandomNumber,
     getRandomElement,
