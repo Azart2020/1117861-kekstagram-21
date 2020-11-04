@@ -1,59 +1,7 @@
 "use strict";
 (function () {
-
-  const DESCRIPTION = [
-    `Тестим новую камеру! =)`,
-    `Первый опыт в фотографии`,
-    `Теплые воспоминания`,
-    `Редкий кадр`,
-    `То что меня вдохновляет`,
-  ];
-
-  const Count = {
-    PHOTOS: 25,
-    LIKES_MIN: 15,
-    LIKES_MAX: 200,
-    COMMENTS: 2,
-  };
-  const modalCloseButton = `Escape`;
   const picturesContainer = document.querySelector(`.pictures`);
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
-
-  const getRandomPhotos = function (count) {
-    const pictures = [];
-    for (let i = 0; i < count; i++) {
-      const picture = getRandomDescription(i);
-      pictures[i] = picture;
-    }
-    return pictures;
-  };
-
-  const getPhoto = function (number) {
-    return `photos/` + (number + 1) + `.jpg`;
-  };
-
-  const getTextPhoto = function () {
-    return window.data.getRandomElement(DESCRIPTION);
-  };
-
-  const getAmountComment = function (amount) {
-    const comments = [];
-    for (let i = 0; i < amount; i++) {
-      const comment = window.comments.getRandomComment();
-      comments[i] = comment;
-    }
-    return comments;
-  };
-
-
-  const getRandomDescription = function (number) {
-    return {
-      url: getPhoto(number),
-      description: getTextPhoto(),
-      likes: window.data.getRandomNumber(Count.LIKES_MIN, Count.LIKES_MAX),
-      comments: getAmountComment(Count.COMMENTS),
-    };
-  };
 
   const renderPictures = function (pictures) {
     const fragment = document.createDocumentFragment();
@@ -70,7 +18,7 @@
   };
 
   const onBodyPhotoKeydown = function (evt) {
-    if (evt.key === modalCloseButton) {
+    if (window.utils.isEscape(evt)) {
       closePhoto();
     }
   };
@@ -104,15 +52,12 @@
     return pictureElement;
   };
 
-  const photos = getRandomPhotos(Count.PHOTOS);
-
-  renderPictures(photos);
-
   const removeChildren = function (element) {
     while (element.firstChild) {
       element.firstChild.remove();
     }
   };
+
   const createComment = function (comment) {
     const commentElement = document.createElement(`li`);
     commentElement.classList.add(`social__comment`);
@@ -162,10 +107,8 @@
   };
 
   window.renderPhoto = {
-    modalCloseButton,
     showBigPicture,
-    photos,
-    renderPictures,
+    renderPictures
   };
 
 })();
