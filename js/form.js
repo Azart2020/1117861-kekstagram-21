@@ -128,7 +128,6 @@
       return newOffset;
     };
 
-
     const onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
