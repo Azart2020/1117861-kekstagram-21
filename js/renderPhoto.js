@@ -3,6 +3,11 @@
   const picturesContainer = document.querySelector(`.pictures`);
   const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 
+  const onSuccess = function () {
+    renderPicture(photos);
+    window.server.loads(onSuccess, window.util.onError);
+  };
+
   const renderPictures = function (pictures) {
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < pictures.length; i++) {
@@ -106,9 +111,11 @@
     commentLoad.classList.add(`hidden`);
   };
 
+
   window.renderPhoto = {
     showBigPicture,
-    renderPictures
+    renderPictures,
+    onSuccess
   };
 
 })();
