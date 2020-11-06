@@ -64,6 +64,7 @@
     openPopup();
     if (preview.classList.contains(`effects__preview--none`)) {
       effectLevelPin.classList.add(`hidden`);
+      effectLevelLine.classList.add(`hidden`);
       effectLevelDepth.style.width = `0%`;
     }
   });
@@ -99,10 +100,11 @@
       effectLevelPin.classList.remove(`hidden`);
       effectLevelDepth.style.width = `100%`;
       effectLevelPin.style.left = `100%`;
+      effectLevelLine.classList.remove(`hidden`);
     }
     if (className === `effects__preview--none`) {
       effectLevelPin.classList.add(`hidden`);
-      effectLevelDepth.style.width = `0%`;
+      effectLevelLine.classList.add(`hidden`);
     }
     preview.style.webkitFilter = ``;
     preview.classList.add(className);

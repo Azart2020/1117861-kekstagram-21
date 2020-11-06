@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  const photos = window.data.getRandomPhotos();
-
-  window.renderPhoto.renderPictures(photos);
+  window.server.loads(function (photos) {
+    window.renderPhoto.renderPictures(photos);
+  });
 })();

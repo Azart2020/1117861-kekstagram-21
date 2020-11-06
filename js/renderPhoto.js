@@ -106,6 +106,7 @@
     commentLoad.classList.add(`hidden`);
   };
 
+
   window.renderPhoto = {
     showBigPicture,
     renderPictures
