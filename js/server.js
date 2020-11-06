@@ -4,12 +4,27 @@
 (function () {
   const URL = `https://21.javascript.pages.academy/kekstagram/data`;
   const StatusCode = {
-    OK: 200
+    OK: 200,
+    NOT_FOUND: 404,
+    BAD_REQUEST: 400,
+    NOT_AUTHORIZED: 401,
+    INTERNAL_SERVER_ERROR: 500
   };
   const TIMEOUT_IN_MS = 10000;
 
+  const onError = function (errorMessage) {
+    const node = document.createElement(`div`);
+    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
+    node.style.position = `absolute`;
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = `30px`;
 
-  const loads = function (onSuccess, onError) {
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(`afterbegin`, node);
+  };
+
+  const loads = function (onSuccess) {
 
     let xhr = new XMLHttpRequest();
 
@@ -22,14 +37,17 @@
           onSuccess(xhr.response);
           break;
 
-        case 400:
+        case StatusCode.BAD_REQUEST:
           error = `Неверный запрос`;
           break;
-        case 401:
+        case StatusCode.NOT_AUTHORIZED:
           error = `Пользователь не авторизован`;
           break;
-        case 404:
+        case StatusCode.NOT_FOUND:
           error = `Ничего не найдено`;
+          break;
+        case StatusCode.INTERNAL_SERVER_ERROR:
+          error = `Ошибка сервера`;
           break;
 
         default:
