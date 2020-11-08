@@ -1251,7 +1251,7 @@ main {
   top: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 3;
 
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -1277,6 +1277,8 @@ main {
 
   background-color: #3c3614;
   border-radius: 10px;
+
+
 }
 
 .success__inner {
@@ -1291,6 +1293,8 @@ main {
   margin-bottom: 50px;
 
   font-size: 32px;
+  line-height: 1.2em;
+}
 }
 
 .success__title {
