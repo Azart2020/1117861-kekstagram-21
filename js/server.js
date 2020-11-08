@@ -2,7 +2,8 @@
 'use strict';
 
 (function () {
-  const URL = `https://21.javascript.pages.academy/kekstagram/data`;
+  const URL_GET = `https://21.javascript.pages.academy/kekstagram/data`;
+  const URL_POST = `https://21.javascript.pages.academy/kekstagram`;
   const StatusCode = {
     OK: 200,
     NOT_FOUND: 404,
@@ -68,12 +69,51 @@
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open(`GET`, URL);
+    xhr.open(`GET`, URL_GET);
 
     xhr.send();
   };
 
+  const unload = function (data, onSuccess) {
+
+    let xhr = new XMLHttpRequest();
+    xhr.responseType = `json`;
+
+    xhr.addEventListener(`load`, function () {
+      let error;
+      switch (xhr.status) {
+        case StatusCode.OK:
+          onSuccess(xhr.response);
+          break;
+
+        case StatusCode.BAD_REQUEST:
+          error = `Неверный запрос`;
+          break;
+        case StatusCode.NOT_AUTHORIZED:
+          error = `Пользователь не авторизован`;
+          break;
+        case StatusCode.NOT_FOUND:
+          error = `Ничего не найдено`;
+          break;
+        case StatusCode.INTERNAL_SERVER_ERROR:
+          error = `Ошибка сервера`;
+          break;
+
+        default:
+          error = `Cтатус ответа: : ` + xhr.status + ` ` + xhr.statusText;
+      }
+
+      if (error) {
+        onError(error);
+      }
+    });
+
+    xhr.open(`POST`, URL_POST);
+    xhr.send(data);
+  };
+
   window.server = {
-    loads
+    loads,
+    unload
   };
 })();

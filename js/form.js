@@ -1,5 +1,6 @@
 "use strict";
 (function () {
+  const form = document.querySelector(`.img-upload__form`);
   const photoForm = document.querySelector(`.img-upload__overlay`);
   const closeForm = document.querySelector(`.img-upload__cancel`);
   const uploadFile = document.querySelector(`#upload-file`);
@@ -11,7 +12,10 @@
   const effectLevelValue = document.querySelector(`.effect-level__value`);
   const effectLevelLine = document.querySelector(`.effect-level__line`);
   const effectLevelDepth = document.querySelector(`.effect-level__depth`);
-
+  const main = document.querySelector(`main`);
+  const successMessageTemplate = document.querySelector(`#success.success`);
+  const errorMessageTemplate = document.querySelector(`#error.success`);
+  const closeButton = document.querySelector(`.success__button, .error__button`);
 
   const updateFilters = function () {
     const pinValue = effectLevelValue.value;
@@ -41,20 +45,21 @@
     }
   };
 
-  let onPopupEscPress = function (evt) {
+
+  const onPopupEscPress = function (evt) {
     if (window.utils.isEscape(evt)) {
       evt.preventDefault();
       closePopup();
     }
   };
 
-  let openPopup = function () {
+  const openPopup = function () {
     photoForm.classList.remove(`hidden`);
 
     document.addEventListener(`keydown`, onPopupEscPress);
   };
 
-  let closePopup = function () {
+  const closePopup = function () {
     photoForm.classList.add(`hidden`);
 
     document.removeEventListener(`keydown`, onPopupEscPress);
@@ -69,9 +74,47 @@
     }
   });
 
+  form.addEventListener(`submit`, function (evt) {
+    evt.preventDefault();
+
+    window.server.unload(new FormData(form),
+        function () {
+          closePopup();
+          form.reset();
+          showMessage(successMessageTemplate);},
+        function () {
+          closePopup();
+          showMessage(errorMessageTemplate);
+        });
+
+
+    const showMessage = function (template) {
+      const message = template.cloneNode(true);
+      main.appendChild(message);
+      document.addEventListener(`keydown`, onMessageEscPress);
+    };
+
+    const onMessageEscPress = function (evt) {
+      if (window.utils.isEscape(evt)) {
+        evt.preventDefault();
+        closeMessage();
+      }
+    };
+    const closeMessage = function () {
+      main.removeChild(message);
+      document.removeEventListener(`keydown`, onMessageEscPress);
+    };
+
+    closeButton.addEventListener(`click`, function () {
+      closeMessage();
+    });
+
+  });
+
   closeForm.addEventListener(`click`, function () {
     closePopup();
   });
+
   closeForm.addEventListener(`keydown`, function (evt) {
     if (window.utils.isEscape(evt)) {
       closePopup();
@@ -103,6 +146,8 @@
       effectLevelLine.classList.remove(`hidden`);
     }
     if (className === `effects__preview--none`) {
+      effectLevelDepth.style.width = `0%`;
+      effectLevelPin.style.left = `0%`;
       effectLevelPin.classList.add(`hidden`);
       effectLevelLine.classList.add(`hidden`);
     }
