@@ -2,7 +2,16 @@
 'use strict';
 
 (function () {
-  const URL = `https://21.javascript.pages.academy/kekstagram/data`;
+  const Url = {
+    GET: `https://21.javascript.pages.academy/kekstagram/data`,
+    POST: `https://21.javascript.pages.academy/kekstagram`
+  };
+
+  const Method = {
+    GET: `GET`,
+    POST: `POST`
+  };
+
   const StatusCode = {
     OK: 200,
     NOT_FOUND: 404,
@@ -10,53 +19,31 @@
     NOT_AUTHORIZED: 401,
     INTERNAL_SERVER_ERROR: 500
   };
-  const TIMEOUT_IN_MS = 10000;
 
-  const onError = function (errorMessage) {
-    const node = document.createElement(`div`);
-    node.style = `z-index: 100; margin: 0 auto; text-align: center; background-color: red;`;
-    node.style.position = `absolute`;
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = `30px`;
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement(`afterbegin`, node);
+  const ErrorMessage = {
+    400: `Неверный запрос`,
+    401: `Пользователь не авторизован`,
+    404: `Ничего не найдено`,
+    500: `Ошибка сервера`
   };
 
-  const loads = function (onSuccess) {
+  const TIMEOUT_IN_MS = 10000;
 
-    let xhr = new XMLHttpRequest();
-
+  const request = function (url, method, onSuccess, onError, data) {
+    const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
 
     xhr.addEventListener(`load`, function () {
-      let error;
-      switch (xhr.status) {
-        case StatusCode.OK:
-          onSuccess(xhr.response);
-          break;
-
-        case StatusCode.BAD_REQUEST:
-          error = `Неверный запрос`;
-          break;
-        case StatusCode.NOT_AUTHORIZED:
-          error = `Пользователь не авторизован`;
-          break;
-        case StatusCode.NOT_FOUND:
-          error = `Ничего не найдено`;
-          break;
-        case StatusCode.INTERNAL_SERVER_ERROR:
-          error = `Ошибка сервера`;
-          break;
-
-        default:
-          error = `Cтатус ответа: : ` + xhr.status + ` ` + xhr.statusText;
+      if (xhr.status === StatusCode.OK) {
+        onSuccess(xhr.response);
+        return;
       }
 
-      if (error) {
-        onError(error);
-      }
+      const error = ErrorMessage[xhr.status]
+        ? ErrorMessage[xhr.status]
+        : `Cтатус ответа: : ` + xhr.status + ` ` + xhr.statusText;
+
+      onError(error);
     });
 
     xhr.addEventListener(`error`, function () {
@@ -68,12 +55,21 @@
 
     xhr.timeout = TIMEOUT_IN_MS;
 
-    xhr.open(`GET`, URL);
+    xhr.open(method, url);
 
-    xhr.send();
+    xhr.send(data);
+  };
+
+  const load = function (onSuccess) {
+    request(Url.GET, Method.GET, onSuccess, window.serverMessage.renderLoadError);
+  };
+
+  const save = function (data, onSuccess) {
+    request(Url.POST, Method.POST, onSuccess, window.serverMessage.renderSaveError, data);
   };
 
   window.server = {
-    loads
+    load,
+    save
   };
 })();

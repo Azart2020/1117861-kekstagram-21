@@ -1,8 +1,10 @@
 "use strict";
 (function () {
+  const form = document.querySelector(`.img-upload__form`);
   const photoForm = document.querySelector(`.img-upload__overlay`);
   const closeForm = document.querySelector(`.img-upload__cancel`);
   const uploadFile = document.querySelector(`#upload-file`);
+  const effectLevel = document.querySelector(`.effect-level`);
   const effectLevelPin = document.querySelector(`.effect-level__pin`);
   const effects = document.querySelector(`.effects`);
   const preview = document.querySelector(`.img-upload__preview > img`);
@@ -11,7 +13,6 @@
   const effectLevelValue = document.querySelector(`.effect-level__value`);
   const effectLevelLine = document.querySelector(`.effect-level__line`);
   const effectLevelDepth = document.querySelector(`.effect-level__depth`);
-
 
   const updateFilters = function () {
     const pinValue = effectLevelValue.value;
@@ -41,20 +42,21 @@
     }
   };
 
-  let onPopupEscPress = function (evt) {
+
+  const onPopupEscPress = function (evt) {
     if (window.utils.isEscape(evt)) {
       evt.preventDefault();
       closePopup();
     }
   };
 
-  let openPopup = function () {
+  const openPopup = function () {
     photoForm.classList.remove(`hidden`);
 
     document.addEventListener(`keydown`, onPopupEscPress);
   };
 
-  let closePopup = function () {
+  const closePopup = function () {
     photoForm.classList.add(`hidden`);
 
     document.removeEventListener(`keydown`, onPopupEscPress);
@@ -63,15 +65,27 @@
   uploadFile.addEventListener(`change`, function () {
     openPopup();
     if (preview.classList.contains(`effects__preview--none`)) {
-      effectLevelPin.classList.add(`hidden`);
-      effectLevelLine.classList.add(`hidden`);
+      effectLevel.classList.add(`hidden`);
       effectLevelDepth.style.width = `0%`;
     }
+  });
+
+  form.addEventListener(`submit`, function (evt) {
+    evt.preventDefault();
+
+    const onSuccess = function () {
+      closePopup();
+      form.reset();
+      window.serverMessage.renderSuccess();
+    };
+
+    window.server.save(new FormData(form), onSuccess);
   });
 
   closeForm.addEventListener(`click`, function () {
     closePopup();
   });
+
   closeForm.addEventListener(`keydown`, function (evt) {
     if (window.utils.isEscape(evt)) {
       closePopup();
@@ -97,14 +111,15 @@
       preview.classList.remove(previewClassName);
     }
     if (className !== `effects__preview--none`) {
-      effectLevelPin.classList.remove(`hidden`);
+      effectLevel.classList.remove(`hidden`);
       effectLevelDepth.style.width = `100%`;
       effectLevelPin.style.left = `100%`;
       effectLevelLine.classList.remove(`hidden`);
     }
     if (className === `effects__preview--none`) {
-      effectLevelPin.classList.add(`hidden`);
-      effectLevelLine.classList.add(`hidden`);
+      effectLevelDepth.style.width = `0%`;
+      effectLevelPin.style.left = `0%`;
+      effectLevel.classList.add(`hidden`);
     }
     preview.style.webkitFilter = ``;
     preview.classList.add(className);
