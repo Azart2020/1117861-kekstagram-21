@@ -8,7 +8,7 @@
   const discussedPhotosButton = imageFilters.querySelector(`#filter-discussed`);
   const defaultPhotosButton = imageFilters.querySelector(`#filter-default`);
 
-  const getFilter = function (photos) {
+  const runFilter = function (photos) {
     imageFilters.classList.remove(`img-filters--inactive`);
     const toggleSelectedFilter = function (selectedFilter) {
       let activeFilter = imageFilters.querySelector(`.img-filters__button--active`);
@@ -26,15 +26,12 @@
       });
     };
 
-
-    defaultPhotosButton.addEventListener(`click`, function () {
-      toggleSelectedFilter(defaultPhotosButton);
+    const renderDefault = function () {
       deletePhotos();
-      window.debounce.setDebounce(window.renderPhoto.renderPictures(photos));
-    });
+      window.renderPhoto.renderPictures(photos);
+    };
 
-    randomPhotosButton.addEventListener(`click`, function () {
-      toggleSelectedFilter(randomPhotosButton);
+    const renderRandom = function () {
       deletePhotos();
       const randomPhotos = [];
       while (randomPhotos.length < RANDOM_PHOTOS_AMOUNT) {
@@ -43,19 +40,50 @@
           randomPhotos.push(randomPhoto);
         }
       }
-      window.debounce.setDebounce(window.renderPhoto.renderPictures(randomPhotos));
+      window.renderPhoto.renderPictures(randomPhotos);
+    };
+
+    const renderDiscussed = function () {
+      deletePhotos();
+      const sortedPhotos = photos.slice().sort(function (a, b) {
+        return b.comments.length - a.comments.length;
+      });
+      window.renderPhoto.renderPictures(sortedPhotos);
+    };
+    const renderFiltered = function (type) {
+      switch (type) {
+        case `random`: {
+          renderRandom();
+          break;
+        }
+        case `discussed`: {
+          renderDiscussed();
+          break;
+        }
+        default: {
+          renderDefault();
+          break;
+        }
+      }
+    };
+
+    const renderFilteredDebounced = window.utils.setDebounce(renderFiltered);
+
+    defaultPhotosButton.addEventListener(`click`, function () {
+      toggleSelectedFilter(defaultPhotosButton);
+      renderFilteredDebounced(`default`);
+    });
+
+    randomPhotosButton.addEventListener(`click`, function () {
+      toggleSelectedFilter(randomPhotosButton);
+      renderFilteredDebounced(`random`);
     });
 
     discussedPhotosButton.addEventListener(`click`, function () {
       toggleSelectedFilter(discussedPhotosButton);
-      deletePhotos();
-      let newArrayPhotos = photos.slice();
-      const sortedPhotos = newArrayPhotos.sort(function (a, b) {
-        return b.comments.length - a.comments.length;
-      });
-      window.debounce.setDebounce(window.renderPhoto.renderPictures(sortedPhotos));
+      renderFilteredDebounced(`discussed`);
     });
   };
   window.filters = {
-    getFilter};
+    runFilter};
 })();
