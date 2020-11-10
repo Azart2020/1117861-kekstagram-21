@@ -49,7 +49,8 @@
     discussedPhotosButton.addEventListener(`click`, function () {
       toggleSelectedFilter(discussedPhotosButton);
       deletePhotos();
-      const sortedPhotos = photos.sort(function (a, b) {
+      let newArrayPhotos = photos.slice();
+      const sortedPhotos = newArrayPhotos.sort(function (a, b) {
         return b.comments.length - a.comments.length;
       });
       window.debounce.setDebounce(window.renderPhoto.renderPictures(sortedPhotos));
