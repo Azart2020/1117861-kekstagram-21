@@ -74,7 +74,7 @@
     mainPicture.querySelector(`.comments-count`).textContent = photo.comments.length;
     mainPicture.querySelector(`.social__caption`).textContent = photo.description;
     mainPicture.querySelector(`.social__picture`).alt = photo.name;
-    /* document.body.classList.add(`modal-open`);*/
+    document.body.classList.add(`modal-open`);
 
     removeChildren(socialElement);
 

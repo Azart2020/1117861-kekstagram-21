@@ -1,7 +1,6 @@
 'use strict';
 (function () {
   const main = document.querySelector(`main`);
-
   const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
   const successMessageTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
 
