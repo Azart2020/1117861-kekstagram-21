@@ -15,23 +15,29 @@
   };
   let scaleValue = Scale.DEFAULT;
 
-  const changeSize = function () {
-    imgEditorPreview.style.transform = `scale(` + scaleValue / 100 + `)`;
-    scaleControlValue.value = scaleValue + `%`;
+  const changeSize = function (value) {
+    imgEditorPreview.style.transform = `scale(` + value / 100 + `)`;
+    scaleControlValue.value = value + `%`;
+    scaleValue = value;
   };
 
   scaleControlSmaller.addEventListener(`click`, function () {
     if (scaleValue > Scale.MIN) {
-      scaleValue = scaleValue - Scale.STEP;
-      changeSize();
+      changeSize(scaleValue - Scale.STEP);
     }
   });
 
   scaleControlBigger.addEventListener(`click`, function () {
     if (scaleValue < Scale.MAX) {
-      scaleValue = scaleValue + Scale.STEP;
-      changeSize();
+      changeSize(scaleValue + Scale.STEP);
     }
   });
+  const reset = function () {
+    changeSize(Scale.DEFAULT);
+  };
+
+  window.scale = {
+    reset
+  };
 
 })();
