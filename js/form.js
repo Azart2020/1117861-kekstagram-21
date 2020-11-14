@@ -52,14 +52,16 @@
 
   const openPopup = function () {
     photoForm.classList.remove(`hidden`);
+    document.body.classList.add(`modal-open`);
 
     document.addEventListener(`keydown`, onPopupEscPress);
   };
 
   const closePopup = function () {
     photoForm.classList.add(`hidden`);
-
+    document.body.classList.remove(`modal-open`);
     document.removeEventListener(`keydown`, onPopupEscPress);
+    window.scale.reset();
   };
 
   uploadFile.addEventListener(`change`, function () {
