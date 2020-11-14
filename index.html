@@ -15,7 +15,7 @@
       <section class="img-filters img-filters--inactive container">
         <h2 class="img-filters__title visually-hidden">Фильтр фотографий</h2>
         <form
-          class="img-filters__form"
+          class="img-filters__form hidden"
           action="index.html"
           method="get"
           autocomplete="off"
@@ -68,6 +68,7 @@
                   class="img-upload__input visually-hidden"
                   name="filename"
                   required
+                  accept="image/jpeg"
                 />
                 <label
                   for="upload-file"
@@ -473,16 +474,6 @@
         Загружаем...
       </div>
     </template>
-      <script src ="js/server-message.js"></script>
-      <script src ="js/filters.js"></script>
-      <script src="js/server.js"></script>
-      <script src="js/utils.js"></script>
-      <script src="js/data.js"></script>
-      <script src="js/scale.js"></script>
-      <script src="js/validation.js"></script>
-      <script src="js/form.js"></script>
-      <script src="js/comments.js"></script>
-      <script src="js/renderPhoto.js"></script>
-      <script src="js/main.js"></script>
+      <script src ="./bundle.js"></script>
   </body>
 </html>
