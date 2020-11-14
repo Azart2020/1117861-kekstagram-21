@@ -698,7 +698,6 @@ const commentFieldText = mainPicture.querySelector(`.social__footer-text`);
 const COMMENTS_STEP = 5;
 
 let onCommentsloadClick = null;
-
 const renderPictures = function (pictures) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < pictures.length; i++) {
