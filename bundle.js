@@ -285,20 +285,7 @@ window.utils = {
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements:  */
 
-const DESCRIPTION = [
-  `Тестим новую камеру! =)`,
-  `Первый опыт в фотографии`,
-  `Теплые воспоминания`,
-  `Редкий кадр`,
-  `То что меня вдохновляет`,
-];
 
-const Count = {
-  PHOTOS: 25,
-  LIKES_MIN: 15,
-  LIKES_MAX: 200,
-  COMMENTS: 2,
-};
 
 const getRandomNumber = function (min, max) {
   min = Math.ceil(min);
@@ -315,46 +302,10 @@ const getRandomIndex = function (elements) {
   return getRandomNumber(0, elements.length - 1);
 };
 
-const getRandomPhotos = function (count = Count.PHOTOS) {
-  const pictures = [];
-  for (let i = 0; i < count; i++) {
-    const picture = getRandomDescription(i);
-    pictures[i] = picture;
-  }
-  return pictures;
-};
-
-const getPhoto = function (number) {
-  return `photos/` + (number + 1) + `.jpg`;
-};
-
-const getTextPhoto = function () {
-  return getRandomElement(DESCRIPTION);
-};
-
-const getAmountComment = function (amount) {
-  const comments = [];
-  for (let i = 0; i < amount; i++) {
-    const comment = window.comments.getRandomComment();
-    comments[i] = comment;
-  }
-  return comments;
-};
-
-
-const getRandomDescription = function (number) {
-  return {
-    url: getPhoto(number),
-    description: getTextPhoto(),
-    likes: getRandomNumber(Count.LIKES_MIN, Count.LIKES_MAX),
-    comments: getAmountComment(Count.COMMENTS),
-  };
-};
 
 window.data = {
   getRandomNumber,
-  getRandomElement,
-  getRandomPhotos
+  getRandomElement
 };
 
 })();
@@ -533,14 +484,27 @@ const onPopupEscPress = function (evt) {
 const openPopup = function () {
   photoForm.classList.remove(`hidden`);
   document.body.classList.add(`modal-open`);
-
+  form.addEventListener(`submit`, onFormSubmit);
   document.addEventListener(`keydown`, onPopupEscPress);
+  effects.addEventListener(`change`, onChangeEffects);
+  window.validation.hashtags.addEventListener(`keydown`, onFieldEsc);
+  textField.addEventListener(`keydown`, onFieldEsc);
+  socialField.addEventListener(`keydown`, onFieldEsc);
+  effectLevelPin.addEventListener(`mousedown`, onPinMouseDown);
+  closeForm.addEventListener(`click`, onPopupClose);
 };
 
 const closePopup = function () {
   photoForm.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
+  form.removeEventListener(`submit`, onFormSubmit);
   document.removeEventListener(`keydown`, onPopupEscPress);
+  window.validation.hashtags.removeEventListener(`keydown`, onFieldEsc);
+  textField.removeEventListener(`keydown`, onFieldEsc);
+  socialField.removeEventListener(`keydown`, onFieldEsc);
+  effects.removeEventListener(`change`, onChangeEffects);
+  effectLevelPin.removeEventListener(`mousedown`, onPinMouseDown);
+  closeForm.removeEventListener(`click`, onPopupClose);
   window.scale.reset();
   clearForm();
 };
@@ -553,7 +517,8 @@ uploadFile.addEventListener(`change`, function () {
   }
 });
 
-form.addEventListener(`submit`, function (evt) {
+const onFormSubmit = function (evt) {
+
   evt.preventDefault();
 
   const onSuccess = function () {
@@ -562,30 +527,23 @@ form.addEventListener(`submit`, function (evt) {
   };
 
   window.server.save(new FormData(form), onSuccess);
-});
+};
 
-closeForm.addEventListener(`click`, function () {
+const onPopupClose = function () {
   closePopup();
-});
+};
+closeForm.addEventListener(`click`, onPopupClose);
 
-closeForm.addEventListener(`keydown`, function (evt) {
-  if (window.utils.isEscape(evt)) {
-    closePopup();
-  }
-});
-window.validation.hashtags.addEventListener(`keydown`, function (evt) {
+closeForm.addEventListener(`keydown`, onPopupEscPress);
+
+const onFieldEsc = function (evt) {
   evt.stopPropagation();
-});
-textField.addEventListener(`keydown`, function (evt) {
-  evt.stopPropagation();
-});
-socialField.addEventListener(`keydown`, function (evt) {
-  evt.stopPropagation();
-});
+};
+
 
 let chosenType = `none`;
 
-effects.addEventListener(`change`, function (evt) {
+const onChangeEffects = function (evt) {
   let toggler = evt.target;
   let className = `effects__preview--` + toggler.value;
   let previewClassName = `effects__preview--` + chosenType;
@@ -606,8 +564,10 @@ effects.addEventListener(`change`, function (evt) {
   preview.style.webkitFilter = ``;
   preview.classList.add(className);
   chosenType = toggler.value;
+};
 
-});
+effects.addEventListener(`change`, onChangeEffects);
+
 const clearForm = function () {
   preview.style = ``;
   preview.classList = ``;
@@ -617,7 +577,8 @@ const clearForm = function () {
   form.reset();
 };
 
-effectLevelPin.addEventListener(`mousedown`, function (evt) {
+const onPinMouseDown = function (evt) {
+
   evt.preventDefault();
 
   const startCoordsX = evt.clientX;
@@ -659,9 +620,7 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
-});
-
-
+};
 
 })();
 
@@ -730,13 +689,16 @@ window.comments = {
 const picturesContainer = document.querySelector(`.pictures`);
 const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 const mainPicture = document.querySelector(`.big-picture`);
-const photoClose = document.querySelector(`.big-picture__cancel`);
+const buttonPhotoClose = document.querySelector(`.big-picture__cancel`);
 const commentLoad = mainPicture.querySelector(`.comments-loader`);
 const commentsContainer = mainPicture.querySelector(`.social__comments`);
 const socialElement = mainPicture.querySelector(`.social__comments`);
 const countElement = mainPicture.querySelector(`.shown-comments-count`);
+const commentFieldText = mainPicture.querySelector(`.social__footer-text`);
+const COMMENTS_STEP = 5;
 
 let onCommentsloadClick = null;
+
 const renderPictures = function (pictures) {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < pictures.length; i++) {
@@ -759,21 +721,18 @@ const onBodyPhotoKeydown = function (evt) {
 };
 
 const closePhoto = function () {
+
   mainPicture.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
-  photoClose.removeEventListener(`click`, onClosePhotoClick);
+  mainPicture.removeEventListener(`click`, onClosePhotoClick);
+  buttonPhotoClose.removeEventListener(`click`, onClosePhotoClick);
   document.body.removeEventListener(`keydown`, onBodyPhotoKeydown);
+  commentFieldText.addEventListener(`keydown`, onCommentFieldEsc);
   if (onCommentsloadClick) {
     commentLoad.removeEventListener(`click`, onCommentsloadClick);
     onCommentsloadClick = null;
   }
 };
-
-photoClose.addEventListener(`click`, function () {
-  mainPicture.classList.remove(`hidden`);
-  mainPicture.addEventListener(`click`, onClosePhotoClick);
-  document.body.addEventListener(`keydown`, onBodyPhotoKeydown);
-});
 
 const renderPicture = function (picture) {
   const pictureElement = pictureTemplate.cloneNode(true);
@@ -794,7 +753,9 @@ const removeChildren = function (element) {
     element.firstChild.remove();
   }
 };
-
+const onCommentFieldEsc = function (evt) {
+  evt.stopPropagation();
+};
 const showBigPicture = function (photo) {
   mainPicture.classList.remove(`hidden`);
   mainPicture.querySelector(`.big-picture__img img`).src = photo.url;
@@ -803,6 +764,11 @@ const showBigPicture = function (photo) {
   mainPicture.querySelector(`.social__caption`).textContent = photo.description;
   mainPicture.querySelector(`.social__picture`).alt = photo.name;
   document.body.classList.add(`modal-open`);
+  commentFieldText.addEventListener(`keydown`, onCommentFieldEsc);
+  buttonPhotoClose.addEventListener(`click`, function () {
+    mainPicture.addEventListener(`click`, onClosePhotoClick);
+    document.body.addEventListener(`keydown`, onBodyPhotoKeydown);
+  });
 
   removeChildren(socialElement);
 
@@ -813,7 +779,7 @@ const showBigPicture = function (photo) {
         commentsContainer,
         currentIndex
     );
-    currentIndex += 5;
+    currentIndex += COMMENTS_STEP;
     countElement.textContent = Math.min(currentIndex, photo.comments.length);
     window.comments.updateButtonVisibility(commentLoad, hasMoreComments);
     return hasMoreComments;

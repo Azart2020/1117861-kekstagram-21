@@ -52,14 +52,27 @@ const onPopupEscPress = function (evt) {
 const openPopup = function () {
   photoForm.classList.remove(`hidden`);
   document.body.classList.add(`modal-open`);
-
+  form.addEventListener(`submit`, onFormSubmit);
   document.addEventListener(`keydown`, onPopupEscPress);
+  effects.addEventListener(`change`, onChangeEffects);
+  window.validation.hashtags.addEventListener(`keydown`, onFieldEsc);
+  textField.addEventListener(`keydown`, onFieldEsc);
+  socialField.addEventListener(`keydown`, onFieldEsc);
+  effectLevelPin.addEventListener(`mousedown`, onPinMouseDown);
+  closeForm.addEventListener(`click`, onPopupClose);
 };
 
 const closePopup = function () {
   photoForm.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
+  form.removeEventListener(`submit`, onFormSubmit);
   document.removeEventListener(`keydown`, onPopupEscPress);
+  window.validation.hashtags.removeEventListener(`keydown`, onFieldEsc);
+  textField.removeEventListener(`keydown`, onFieldEsc);
+  socialField.removeEventListener(`keydown`, onFieldEsc);
+  effects.removeEventListener(`change`, onChangeEffects);
+  effectLevelPin.removeEventListener(`mousedown`, onPinMouseDown);
+  closeForm.removeEventListener(`click`, onPopupClose);
   window.scale.reset();
   clearForm();
 };
@@ -72,7 +85,8 @@ uploadFile.addEventListener(`change`, function () {
   }
 });
 
-form.addEventListener(`submit`, function (evt) {
+const onFormSubmit = function (evt) {
+
   evt.preventDefault();
 
   const onSuccess = function () {
@@ -81,30 +95,23 @@ form.addEventListener(`submit`, function (evt) {
   };
 
   window.server.save(new FormData(form), onSuccess);
-});
+};
 
-closeForm.addEventListener(`click`, function () {
+const onPopupClose = function () {
   closePopup();
-});
+};
+closeForm.addEventListener(`click`, onPopupClose);
 
-closeForm.addEventListener(`keydown`, function (evt) {
-  if (window.utils.isEscape(evt)) {
-    closePopup();
-  }
-});
-window.validation.hashtags.addEventListener(`keydown`, function (evt) {
+closeForm.addEventListener(`keydown`, onPopupEscPress);
+
+const onFieldEsc = function (evt) {
   evt.stopPropagation();
-});
-textField.addEventListener(`keydown`, function (evt) {
-  evt.stopPropagation();
-});
-socialField.addEventListener(`keydown`, function (evt) {
-  evt.stopPropagation();
-});
+};
+
 
 let chosenType = `none`;
 
-effects.addEventListener(`change`, function (evt) {
+const onChangeEffects = function (evt) {
   let toggler = evt.target;
   let className = `effects__preview--` + toggler.value;
   let previewClassName = `effects__preview--` + chosenType;
@@ -125,8 +132,10 @@ effects.addEventListener(`change`, function (evt) {
   preview.style.webkitFilter = ``;
   preview.classList.add(className);
   chosenType = toggler.value;
+};
 
-});
+effects.addEventListener(`change`, onChangeEffects);
+
 const clearForm = function () {
   preview.style = ``;
   preview.classList = ``;
@@ -136,7 +145,8 @@ const clearForm = function () {
   form.reset();
 };
 
-effectLevelPin.addEventListener(`mousedown`, function (evt) {
+const onPinMouseDown = function (evt) {
+
   evt.preventDefault();
 
   const startCoordsX = evt.clientX;
@@ -178,6 +188,4 @@ effectLevelPin.addEventListener(`mousedown`, function (evt) {
 
   document.addEventListener(`mousemove`, onMouseMove);
   document.addEventListener(`mouseup`, onMouseUp);
-});
-
-
+};
