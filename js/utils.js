@@ -1,14 +1,12 @@
 'use strict';
 const ESCAPE = `Escape`;
 const DEBOUNCE_INTERVAL = 500;
-const isEscape = function (evt) {
-  return evt.key === ESCAPE;
-};
+const isEscape = (evt) => evt.key === ESCAPE;
 
-const setDebounce = function (fn, interval = DEBOUNCE_INTERVAL) {
+const setDebounce = (fn, interval = DEBOUNCE_INTERVAL) => {
   let lastTimeout = null;
 
-  const debounced = function (...elements) {
+  const debounced = (...elements) => {
     if (lastTimeout) {
       clearTimeout(lastTimeout);
     }

@@ -11,7 +11,7 @@ const commentFieldText = mainPicture.querySelector(`.social__footer-text`);
 const COMMENTS_STEP = 5;
 
 let onCommentsloadClick = null;
-const renderPictures = function (pictures) {
+const renderPictures = (pictures) => {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < pictures.length; i++) {
     const picture = pictures[i];
@@ -22,17 +22,15 @@ const renderPictures = function (pictures) {
   window.filters.showFiltersForm();
 };
 
-const onClosePhotoClick = function () {
-  closePhoto();
-};
+const onClosePhotoClick = () => closePhoto();
 
-const onBodyPhotoKeydown = function (evt) {
+const onBodyPhotoKeydown = (evt) => {
   if (window.utils.isEscape(evt)) {
     closePhoto();
   }
 };
 
-const closePhoto = function () {
+const closePhoto = () => {
 
   mainPicture.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
@@ -46,7 +44,7 @@ const closePhoto = function () {
   }
 };
 
-const renderPicture = function (picture) {
+const renderPicture = (picture) => {
   const pictureElement = pictureTemplate.cloneNode(true);
 
   pictureElement.querySelector(`.picture__img`).src = picture.url;
@@ -60,15 +58,13 @@ const renderPicture = function (picture) {
   return pictureElement;
 };
 
-const removeChildren = function (element) {
+const removeChildren = (element) => {
   while (element.firstChild) {
     element.firstChild.remove();
   }
 };
-const onCommentFieldEsc = function (evt) {
-  evt.stopPropagation();
-};
-const showBigPicture = function (photo) {
+const onCommentFieldEsc = (evt) => evt.stopPropagation();
+const showBigPicture = (photo) => {
   mainPicture.classList.remove(`hidden`);
   mainPicture.querySelector(`.big-picture__img img`).src = photo.url;
   mainPicture.querySelector(`.likes-count`).textContent = photo.likes;
@@ -85,7 +81,7 @@ const showBigPicture = function (photo) {
   removeChildren(socialElement);
 
   let currentIndex = 0;
-  const loadComments = function () {
+  const loadComments = () => {
     const hasMoreComments = window.comments.renderCommentsSlice(
         photo.comments,
         commentsContainer,
@@ -98,10 +94,7 @@ const showBigPicture = function (photo) {
   };
 
   if (loadComments()) {
-    onCommentsloadClick = function () {
-      loadComments();
-
-    };
+    onCommentsloadClick = () => loadComments();
     commentLoad.addEventListener(`click`, onCommentsloadClick);
   }
 };

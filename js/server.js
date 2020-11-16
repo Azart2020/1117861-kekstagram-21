@@ -28,7 +28,7 @@ const ErrorMessage = {
 
 const TIMEOUT_IN_MS = 10000;
 
-const request = function (url, method, onSuccess, onError, data) {
+const request = (url, method, onSuccess, onError, data) => {
   const xhr = new XMLHttpRequest();
   xhr.responseType = `json`;
 
@@ -59,13 +59,9 @@ const request = function (url, method, onSuccess, onError, data) {
   xhr.send(data);
 };
 
-const load = function (onSuccess) {
-  request(Url.GET, Method.GET, onSuccess, window.serverMessage.renderLoadError);
-};
+const load = (onSuccess) => request(Url.GET, Method.GET, onSuccess, window.serverMessage.renderLoadError);
 
-const save = function (data, onSuccess) {
-  request(Url.POST, Method.POST, onSuccess, window.serverMessage.renderSaveError, data);
-};
+const save = (data, onSuccess) => request(Url.POST, Method.POST, onSuccess, window.serverMessage.renderSaveError, data);
 
 window.server = {
   load,

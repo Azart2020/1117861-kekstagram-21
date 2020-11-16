@@ -8,13 +8,11 @@ const randomPhotosButton = imageFilters.querySelector(`#filter-random`);
 const discussedPhotosButton = imageFilters.querySelector(`#filter-discussed`);
 const defaultPhotosButton = imageFilters.querySelector(`#filter-default`);
 
-const showFiltersForm = function () {
-  imagesFiltersForm.classList.remove(`hidden`);
-};
+const showFiltersForm = () => imagesFiltersForm.classList.remove(`hidden`);
 
-const runFilter = function (photos) {
+const runFilter = (photos) => {
   imageFilters.classList.remove(`img-filters--inactive`);
-  const toggleSelectedFilter = function (selectedFilter) {
+  const toggleSelectedFilter = (selectedFilter) => {
     let activeFilter = imageFilters.querySelector(`.img-filters__button--active`);
 
     activeFilter.classList.remove(`img-filters__button--active`);
@@ -23,19 +21,19 @@ const runFilter = function (photos) {
 
   window.renderPhoto.renderPictures(photos);
 
-  const deletePhotos = function () {
+  const deletePhotos = () => {
     let picArray = document.querySelectorAll(`a.picture`);
     picArray.forEach(function (element) {
       element.remove();
     });
   };
 
-  const renderDefault = function () {
+  const renderDefault = () => {
     deletePhotos();
     window.renderPhoto.renderPictures(photos);
   };
 
-  const renderRandom = function () {
+  const renderRandom = () => {
     deletePhotos();
     const randomPhotos = [];
     while (randomPhotos.length < RANDOM_PHOTOS_AMOUNT) {
@@ -47,14 +45,14 @@ const runFilter = function (photos) {
     window.renderPhoto.renderPictures(randomPhotos);
   };
 
-  const renderDiscussed = function () {
+  const renderDiscussed = () => {
     deletePhotos();
     const sortedPhotos = photos.slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
     window.renderPhoto.renderPictures(sortedPhotos);
   };
-  const renderFiltered = function (type) {
+  const renderFiltered = (type) => {
     switch (type) {
       case `random`: {
         renderRandom();

@@ -12,8 +12,9 @@ const socialField = document.querySelector(`.social__footer-text`);
 const effectLevelValue = document.querySelector(`.effect-level__value`);
 const effectLevelLine = document.querySelector(`.effect-level__line`);
 const effectLevelDepth = document.querySelector(`.effect-level__depth`);
+const FILE_TYPES = [`jpg`, `jpeg`];
 
-const updateFilters = function () {
+const updateFilters = () => {
   const pinValue = effectLevelValue.value;
   let filterValue;
   if (preview.classList.contains(`effects__preview--none`)) {
@@ -42,14 +43,14 @@ const updateFilters = function () {
 };
 
 
-const onPopupEscPress = function (evt) {
+const onPopupEscPress = (evt) => {
   if (window.utils.isEscape(evt)) {
     evt.preventDefault();
     closePopup();
   }
 };
 
-const openPopup = function () {
+const openPopup = () => {
   photoForm.classList.remove(`hidden`);
   document.body.classList.add(`modal-open`);
   form.addEventListener(`submit`, onFormSubmit);
@@ -62,7 +63,7 @@ const openPopup = function () {
   closeForm.addEventListener(`click`, onPopupClose);
 };
 
-const closePopup = function () {
+const closePopup = () => {
   photoForm.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
   form.removeEventListener(`submit`, onFormSubmit);
@@ -78,6 +79,27 @@ const closePopup = function () {
 };
 
 uploadFile.addEventListener(`change`, function () {
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some(function (it) {
+    return fileName.endsWith(it);
+  });
+  const addIcons = (src) => {
+    const allIconPreview = document.querySelectorAll(`.effects__item span`);
+    allIconPreview.forEach(function (element) {
+      element.style.cssText = `background-image: url(` + src + `)`;
+    });
+  };
+
+  if (matches) {
+    let reader = new FileReader();
+
+    reader.addEventListener(`load`, function () {
+      preview.src = reader.result;
+      addIcons(preview.src);
+    });
+    reader.readAsDataURL(file);
+  }
   openPopup();
   if (preview.classList.contains(`effects__preview--none`)) {
     effectLevel.classList.add(`hidden`);
@@ -85,11 +107,11 @@ uploadFile.addEventListener(`change`, function () {
   }
 });
 
-const onFormSubmit = function (evt) {
+const onFormSubmit = (evt) => {
 
   evt.preventDefault();
 
-  const onSuccess = function () {
+  const onSuccess = () => {
     closePopup();
     window.serverMessage.renderSuccess();
   };
@@ -97,21 +119,17 @@ const onFormSubmit = function (evt) {
   window.server.save(new FormData(form), onSuccess);
 };
 
-const onPopupClose = function () {
-  closePopup();
-};
+const onPopupClose = () => closePopup();
 closeForm.addEventListener(`click`, onPopupClose);
 
 closeForm.addEventListener(`keydown`, onPopupEscPress);
 
-const onFieldEsc = function (evt) {
-  evt.stopPropagation();
-};
+const onFieldEsc = (evt) => evt.stopPropagation();
 
 
 let chosenType = `none`;
 
-const onChangeEffects = function (evt) {
+const onChangeEffects = (evt) => {
   let toggler = evt.target;
   let className = `effects__preview--` + toggler.value;
   let previewClassName = `effects__preview--` + chosenType;
@@ -136,7 +154,7 @@ const onChangeEffects = function (evt) {
 
 effects.addEventListener(`change`, onChangeEffects);
 
-const clearForm = function () {
+const clearForm = () => {
   preview.style = ``;
   preview.classList = ``;
   effectLevelDepth.style.width = `100%`;
@@ -145,7 +163,7 @@ const clearForm = function () {
   form.reset();
 };
 
-const onPinMouseDown = function (evt) {
+const onPinMouseDown = (evt) => {
 
   evt.preventDefault();
 
@@ -153,7 +171,7 @@ const onPinMouseDown = function (evt) {
   const startOffset = effectLevelPin.offsetLeft;
   const offsetWidth = effectLevelLine.offsetWidth;
 
-  const getNewOffset = function (shiftX) {
+  const getNewOffset = (shiftX) => {
     let newOffset = (startOffset - shiftX) * 100 / offsetWidth;
 
     if (newOffset < 0) {
@@ -164,7 +182,7 @@ const onPinMouseDown = function (evt) {
     return newOffset;
   };
 
-  const onMouseMove = function (moveEvt) {
+  const onMouseMove = (moveEvt) => {
     moveEvt.preventDefault();
 
     const shiftX = startCoordsX - moveEvt.clientX;
@@ -178,7 +196,7 @@ const onPinMouseDown = function (evt) {
     updateFilters();
   };
 
-  const onMouseUp = function (upEvt) {
+  const onMouseUp = (upEvt) => {
     upEvt.preventDefault();
 
     updateFilters();

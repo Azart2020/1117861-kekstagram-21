@@ -7,7 +7,7 @@ const Hashtags = {
   MAX_COUNT: 5,
 };
 
-const showValidationError = function (message) {
+const showValidationError = (message) => {
   hashtags.setCustomValidity(message);
   hashtags.reportValidity();
 };
@@ -47,7 +47,7 @@ hashtags.addEventListener(`change`, function (evt) {
   showValidationError(``);
 });
 
-const checkValidityHashtag = function (tag) {
+const checkValidityHashtag = (tag) => {
   return /^#[a-zA-Zа-яА-ЯёЁ0-9]{1,20}$/.test(tag);
 };
 

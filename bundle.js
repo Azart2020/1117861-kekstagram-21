@@ -11,25 +11,25 @@ const main = document.querySelector(`main`);
 const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
 const successMessageTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
 
-const render = function (template, prefix, title) {
+const render = (template, prefix, title) => {
   const modal = template.cloneNode(true);
   if (title) {
     modal.querySelector(`.${prefix}__title`).textContent = title;
   }
 
-  const closeModal = function () {
+  const closeModal = () => {
     window.removeEventListener(`keydown`, onWindowKeydown);
     document.body.removeEventListener(`click`, onBodyClick);
     modal.remove();
   };
 
-  const onWindowKeydown = function (evt) {
+  const onWindowKeydown = (evt) => {
     if (window.utils.isEscape(evt)) {
       closeModal();
     }
   };
 
-  const onBodyClick = function () {
+  const onBodyClick = () => {
     closeModal();
   };
 
@@ -39,15 +39,15 @@ const render = function (template, prefix, title) {
   main.appendChild(modal);
 };
 
-const renderLoadError = function (errorMessage) {
+const renderLoadError = (errorMessage) => {
   render(errorMessageTemplate, `error`, errorMessage);
 };
 
-const renderSaveError = function (errorMessage) {
+const renderSaveError = (errorMessage) => {
   render(errorMessageTemplate, `error`, `Ошибка загрузки файла: ${errorMessage}`);
 };
 
-const renderSuccess = function () {
+const renderSuccess = () => {
   render(successMessageTemplate, `success`);
 };
 
@@ -75,13 +75,11 @@ const randomPhotosButton = imageFilters.querySelector(`#filter-random`);
 const discussedPhotosButton = imageFilters.querySelector(`#filter-discussed`);
 const defaultPhotosButton = imageFilters.querySelector(`#filter-default`);
 
-const showFiltersForm = function () {
-  imagesFiltersForm.classList.remove(`hidden`);
-};
+const showFiltersForm = () => imagesFiltersForm.classList.remove(`hidden`);
 
-const runFilter = function (photos) {
+const runFilter = (photos) => {
   imageFilters.classList.remove(`img-filters--inactive`);
-  const toggleSelectedFilter = function (selectedFilter) {
+  const toggleSelectedFilter = (selectedFilter) => {
     let activeFilter = imageFilters.querySelector(`.img-filters__button--active`);
 
     activeFilter.classList.remove(`img-filters__button--active`);
@@ -90,19 +88,19 @@ const runFilter = function (photos) {
 
   window.renderPhoto.renderPictures(photos);
 
-  const deletePhotos = function () {
+  const deletePhotos = () => {
     let picArray = document.querySelectorAll(`a.picture`);
     picArray.forEach(function (element) {
       element.remove();
     });
   };
 
-  const renderDefault = function () {
+  const renderDefault = () => {
     deletePhotos();
     window.renderPhoto.renderPictures(photos);
   };
 
-  const renderRandom = function () {
+  const renderRandom = () => {
     deletePhotos();
     const randomPhotos = [];
     while (randomPhotos.length < RANDOM_PHOTOS_AMOUNT) {
@@ -114,14 +112,14 @@ const runFilter = function (photos) {
     window.renderPhoto.renderPictures(randomPhotos);
   };
 
-  const renderDiscussed = function () {
+  const renderDiscussed = () => {
     deletePhotos();
     const sortedPhotos = photos.slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
     window.renderPhoto.renderPictures(sortedPhotos);
   };
-  const renderFiltered = function (type) {
+  const renderFiltered = (type) => {
     switch (type) {
       case `random`: {
         renderRandom();
@@ -198,7 +196,7 @@ const ErrorMessage = {
 
 const TIMEOUT_IN_MS = 10000;
 
-const request = function (url, method, onSuccess, onError, data) {
+const request = (url, method, onSuccess, onError, data) => {
   const xhr = new XMLHttpRequest();
   xhr.responseType = `json`;
 
@@ -229,11 +227,11 @@ const request = function (url, method, onSuccess, onError, data) {
   xhr.send(data);
 };
 
-const load = function (onSuccess) {
+const load = (onSuccess) => {
   request(Url.GET, Method.GET, onSuccess, window.serverMessage.renderLoadError);
 };
 
-const save = function (data, onSuccess) {
+const save = (data, onSuccess) => {
   request(Url.POST, Method.POST, onSuccess, window.serverMessage.renderSaveError, data);
 };
 
@@ -253,14 +251,14 @@ window.server = {
 
 const ESCAPE = `Escape`;
 const DEBOUNCE_INTERVAL = 500;
-const isEscape = function (evt) {
+const isEscape = (evt) => {
   return evt.key === ESCAPE;
 };
 
-const setDebounce = function (fn, interval = DEBOUNCE_INTERVAL) {
+const setDebounce = (fn, interval = DEBOUNCE_INTERVAL) => {
   let lastTimeout = null;
 
-  const debounced = function (...elements) {
+  const debounced = (...elements) => {
     if (lastTimeout) {
       clearTimeout(lastTimeout);
     }
@@ -287,20 +285,18 @@ window.utils = {
 
 
 
-const getRandomNumber = function (min, max) {
+const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getRandomElement = function (elements) {
+const getRandomElement = (elements) => {
   const index = getRandomIndex(elements);
   return elements[index];
 };
 
-const getRandomIndex = function (elements) {
-  return getRandomNumber(0, elements.length - 1);
-};
+const getRandomIndex = (elements) => getRandomNumber(0, elements.length - 1);
 
 
 window.data = {
@@ -332,7 +328,7 @@ const Scale = {
 };
 let scaleValue = Scale.DEFAULT;
 
-const changeSize = function (value) {
+const changeSize = (value) => {
   imgEditorPreview.style.transform = `scale(` + value / 100 + `)`;
   scaleControlValue.value = value + `%`;
   scaleValue = value;
@@ -349,7 +345,7 @@ scaleControlBigger.addEventListener(`click`, function () {
     changeSize(scaleValue + Scale.STEP);
   }
 });
-const reset = function () {
+const reset = () => {
   changeSize(Scale.DEFAULT);
 };
 
@@ -374,7 +370,7 @@ const Hashtags = {
   MAX_COUNT: 5,
 };
 
-const showValidationError = function (message) {
+const showValidationError = (message) => {
   hashtags.setCustomValidity(message);
   hashtags.reportValidity();
 };
@@ -414,7 +410,7 @@ hashtags.addEventListener(`change`, function (evt) {
   showValidationError(``);
 });
 
-const checkValidityHashtag = function (tag) {
+const checkValidityHashtag = (tag) => {
   return /^#[a-zA-Zа-яА-ЯёЁ0-9]{1,20}$/.test(tag);
 };
 
@@ -444,8 +440,9 @@ const socialField = document.querySelector(`.social__footer-text`);
 const effectLevelValue = document.querySelector(`.effect-level__value`);
 const effectLevelLine = document.querySelector(`.effect-level__line`);
 const effectLevelDepth = document.querySelector(`.effect-level__depth`);
+const FILE_TYPES = [`jpg`, `jpeg`];
 
-const updateFilters = function () {
+const updateFilters = () => {
   const pinValue = effectLevelValue.value;
   let filterValue;
   if (preview.classList.contains(`effects__preview--none`)) {
@@ -474,14 +471,14 @@ const updateFilters = function () {
 };
 
 
-const onPopupEscPress = function (evt) {
+const onPopupEscPress = (evt) => {
   if (window.utils.isEscape(evt)) {
     evt.preventDefault();
     closePopup();
   }
 };
 
-const openPopup = function () {
+const openPopup = () => {
   photoForm.classList.remove(`hidden`);
   document.body.classList.add(`modal-open`);
   form.addEventListener(`submit`, onFormSubmit);
@@ -494,7 +491,7 @@ const openPopup = function () {
   closeForm.addEventListener(`click`, onPopupClose);
 };
 
-const closePopup = function () {
+const closePopup = () => {
   photoForm.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
   form.removeEventListener(`submit`, onFormSubmit);
@@ -510,6 +507,27 @@ const closePopup = function () {
 };
 
 uploadFile.addEventListener(`change`, function () {
+  const file = uploadFile.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some(function (it) {
+    return fileName.endsWith(it);
+  });
+  const addIcons = (src) => {
+    const allIconPreview = document.querySelectorAll(`.effects__item span`);
+    allIconPreview.forEach(function (element) {
+      element.style.cssText = `background-image: url(` + src + `)`;
+    });
+  };
+
+  if (matches) {
+    let reader = new FileReader();
+
+    reader.addEventListener(`load`, function () {
+      preview.src = reader.result;
+      addIcons(preview.src);
+    });
+    reader.readAsDataURL(file);
+  }
   openPopup();
   if (preview.classList.contains(`effects__preview--none`)) {
     effectLevel.classList.add(`hidden`);
@@ -517,11 +535,11 @@ uploadFile.addEventListener(`change`, function () {
   }
 });
 
-const onFormSubmit = function (evt) {
+const onFormSubmit = (evt) => {
 
   evt.preventDefault();
 
-  const onSuccess = function () {
+  const onSuccess = () => {
     closePopup();
     window.serverMessage.renderSuccess();
   };
@@ -529,21 +547,17 @@ const onFormSubmit = function (evt) {
   window.server.save(new FormData(form), onSuccess);
 };
 
-const onPopupClose = function () {
-  closePopup();
-};
+const onPopupClose = () => closePopup();
 closeForm.addEventListener(`click`, onPopupClose);
 
 closeForm.addEventListener(`keydown`, onPopupEscPress);
 
-const onFieldEsc = function (evt) {
-  evt.stopPropagation();
-};
+const onFieldEsc = (evt) => evt.stopPropagation();
 
 
 let chosenType = `none`;
 
-const onChangeEffects = function (evt) {
+const onChangeEffects = (evt) => {
   let toggler = evt.target;
   let className = `effects__preview--` + toggler.value;
   let previewClassName = `effects__preview--` + chosenType;
@@ -568,7 +582,7 @@ const onChangeEffects = function (evt) {
 
 effects.addEventListener(`change`, onChangeEffects);
 
-const clearForm = function () {
+const clearForm = () => {
   preview.style = ``;
   preview.classList = ``;
   effectLevelDepth.style.width = `100%`;
@@ -577,7 +591,7 @@ const clearForm = function () {
   form.reset();
 };
 
-const onPinMouseDown = function (evt) {
+const onPinMouseDown = (evt) => {
 
   evt.preventDefault();
 
@@ -585,7 +599,7 @@ const onPinMouseDown = function (evt) {
   const startOffset = effectLevelPin.offsetLeft;
   const offsetWidth = effectLevelLine.offsetWidth;
 
-  const getNewOffset = function (shiftX) {
+  const getNewOffset = (shiftX) => {
     let newOffset = (startOffset - shiftX) * 100 / offsetWidth;
 
     if (newOffset < 0) {
@@ -596,7 +610,7 @@ const onPinMouseDown = function (evt) {
     return newOffset;
   };
 
-  const onMouseMove = function (moveEvt) {
+  const onMouseMove = (moveEvt) => {
     moveEvt.preventDefault();
 
     const shiftX = startCoordsX - moveEvt.clientX;
@@ -610,7 +624,7 @@ const onPinMouseDown = function (evt) {
     updateFilters();
   };
 
-  const onMouseUp = function (upEvt) {
+  const onMouseUp = (upEvt) => {
     upEvt.preventDefault();
 
     updateFilters();
@@ -633,7 +647,7 @@ const onPinMouseDown = function (evt) {
 
 
 const COMMENTS_AMOUNT = 5;
-const renderComment = function (comment) {
+const renderComment = (comment) => {
   const commentElement = document.createElement(`li`);
   commentElement.classList.add(`social__comment`);
 
@@ -650,7 +664,7 @@ const renderComment = function (comment) {
 
   return commentElement;
 };
-const renderComments = function (comments) {
+const renderComments = (comments) => {
   const fragment = document.createDocumentFragment();
   comments.forEach(function (comment) {
     const commentElement = renderComment(comment);
@@ -659,14 +673,14 @@ const renderComments = function (comments) {
   return fragment;
 };
 
-const renderCommentsSlice = function (comments, parent, from, count = COMMENTS_AMOUNT) {
+const renderCommentsSlice = (comments, parent, from, count = COMMENTS_AMOUNT) => {
   const slicedComments = comments.slice(from, from + count);
   const commentsFragment = renderComments(slicedComments);
   parent.appendChild(commentsFragment);
   return from + count < comments.length;
 };
 
-const updateButtonVisibility = function (button, state) {
+const updateButtonVisibility = (button, state) => {
   return state
     ? button.classList.remove(`hidden`)
     : button.classList.add(`hidden`);
@@ -698,7 +712,7 @@ const commentFieldText = mainPicture.querySelector(`.social__footer-text`);
 const COMMENTS_STEP = 5;
 
 let onCommentsloadClick = null;
-const renderPictures = function (pictures) {
+const renderPictures = (pictures) => {
   const fragment = document.createDocumentFragment();
   for (let i = 0; i < pictures.length; i++) {
     const picture = pictures[i];
@@ -709,17 +723,17 @@ const renderPictures = function (pictures) {
   window.filters.showFiltersForm();
 };
 
-const onClosePhotoClick = function () {
+const onClosePhotoClick = () => {
   closePhoto();
 };
 
-const onBodyPhotoKeydown = function (evt) {
+const onBodyPhotoKeydown = (evt) => {
   if (window.utils.isEscape(evt)) {
     closePhoto();
   }
 };
 
-const closePhoto = function () {
+const closePhoto = () => {
 
   mainPicture.classList.add(`hidden`);
   document.body.classList.remove(`modal-open`);
@@ -733,7 +747,7 @@ const closePhoto = function () {
   }
 };
 
-const renderPicture = function (picture) {
+const renderPicture = (picture) => {
   const pictureElement = pictureTemplate.cloneNode(true);
 
   pictureElement.querySelector(`.picture__img`).src = picture.url;
@@ -747,15 +761,15 @@ const renderPicture = function (picture) {
   return pictureElement;
 };
 
-const removeChildren = function (element) {
+const removeChildren = (element) => {
   while (element.firstChild) {
     element.firstChild.remove();
   }
 };
-const onCommentFieldEsc = function (evt) {
+const onCommentFieldEsc = (evt) => {
   evt.stopPropagation();
 };
-const showBigPicture = function (photo) {
+const showBigPicture = (photo) => {
   mainPicture.classList.remove(`hidden`);
   mainPicture.querySelector(`.big-picture__img img`).src = photo.url;
   mainPicture.querySelector(`.likes-count`).textContent = photo.likes;
@@ -772,7 +786,7 @@ const showBigPicture = function (photo) {
   removeChildren(socialElement);
 
   let currentIndex = 0;
-  const loadComments = function () {
+  const loadComments = () => {
     const hasMoreComments = window.comments.renderCommentsSlice(
         photo.comments,
         commentsContainer,
@@ -785,7 +799,7 @@ const showBigPicture = function (photo) {
   };
 
   if (loadComments()) {
-    onCommentsloadClick = function () {
+    onCommentsloadClick = () => {
       loadComments();
 
     };

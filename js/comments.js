@@ -1,7 +1,7 @@
 "use strict";
 
 const COMMENTS_AMOUNT = 5;
-const renderComment = function (comment) {
+const renderComment = (comment) => {
   const commentElement = document.createElement(`li`);
   commentElement.classList.add(`social__comment`);
 
@@ -18,7 +18,7 @@ const renderComment = function (comment) {
 
   return commentElement;
 };
-const renderComments = function (comments) {
+const renderComments = (comments) => {
   const fragment = document.createDocumentFragment();
   comments.forEach(function (comment) {
     const commentElement = renderComment(comment);
@@ -27,14 +27,14 @@ const renderComments = function (comments) {
   return fragment;
 };
 
-const renderCommentsSlice = function (comments, parent, from, count = COMMENTS_AMOUNT) {
+const renderCommentsSlice = (comments, parent, from, count = COMMENTS_AMOUNT) => {
   const slicedComments = comments.slice(from, from + count);
   const commentsFragment = renderComments(slicedComments);
   parent.appendChild(commentsFragment);
   return from + count < comments.length;
 };
 
-const updateButtonVisibility = function (button, state) {
+const updateButtonVisibility = (button, state) => {
   return state
     ? button.classList.remove(`hidden`)
     : button.classList.add(`hidden`);

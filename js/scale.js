@@ -14,7 +14,7 @@ const Scale = {
 };
 let scaleValue = Scale.DEFAULT;
 
-const changeSize = function (value) {
+const changeSize = (value) => {
   imgEditorPreview.style.transform = `scale(` + value / 100 + `)`;
   scaleControlValue.value = value + `%`;
   scaleValue = value;
@@ -31,9 +31,7 @@ scaleControlBigger.addEventListener(`click`, function () {
     changeSize(scaleValue + Scale.STEP);
   }
 });
-const reset = function () {
-  changeSize(Scale.DEFAULT);
-};
+const reset = () => changeSize(Scale.DEFAULT);
 
 window.scale = {
   reset
